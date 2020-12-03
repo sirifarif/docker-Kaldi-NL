@@ -1,5 +1,7 @@
 #!/bin/bash
 
+NOOFWORKERS=1
+NOOFWORKERS=$1
 MASTER="localhost"
 PORT=80
 YAML="/opt/kaldi-gstreamer-server/mod/dutch_nnet3.yaml"
@@ -39,5 +41,6 @@ fi
 #start worker and connect it to the master
 export GST_PLUGIN_PATH=/opt/gst-kaldi-nnet2-online/src/:/opt/kaldi/src/gst-plugin/
 
-python /opt/kaldi-gstreamer-server/kaldigstserver/worker.py -c $YAML -u ws://$MASTER:$PORT/worker/ws/speech 2>> /opt/worker.log &
-
+for w in $( eval echo {1..$NOOFWORKERS} );do
+  python /opt/kaldi-gstreamer-server/kaldigstserver/worker.py -c $YAML -u ws://$MASTER:$PORT/worker/ws/speech 2>> /opt/worker${w}.log &
+done
